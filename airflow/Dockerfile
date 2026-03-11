@@ -31,16 +31,16 @@ RUN mkdir -p ${AIRFLOW_HOME} && \
 # Install Airflow with PostgreSQL support
 RUN pip install --no-cache-dir \
     "apache-airflow[postgres]==${AIRFLOW_VERSION}" \
-    --constraint "${CONSTRAINT_URL}" \
-    psycopg2-binary
+    --constraint "${CONSTRAINT_URL}"
 
 # Copy requirements and install project dependencies
 COPY requirements-airflow.txt /tmp/requirements-airflow.txt
 RUN pip install --no-cache-dir -r /tmp/requirements-airflow.txt
 
 # Copy and set up entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY entrypoint.sh ${AIRFLOW_HOME}/entrypoint.sh
+RUN sed -i 's/\r$//' ${AIRFLOW_HOME}/entrypoint.sh && \
+    chmod +x ${AIRFLOW_HOME}/entrypoint.sh
 
 # Switch to airflow user and set working directory
 USER airflow
@@ -49,4 +49,4 @@ WORKDIR ${AIRFLOW_HOME}
 # Expose port
 EXPOSE 8080
 
-CMD ["/entrypoint.sh"]
+CMD ["./entrypoint.sh"]

@@ -39,9 +39,9 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru --requirepass X74g/aCN5aAyMPA4PKNwww==
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "X74g/aCN5aAyMPA4PKNwww==", "ping"]
       interval: 10s
       timeout: 3s
       retries: 3
@@ -151,7 +151,7 @@ services:
       - rag-network
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     container_name: rag-postgres
     environment:
       - POSTGRES_DB=rag_db
@@ -195,7 +195,7 @@ services:
       - rag-network
 
   langfuse-worker:
-    image: docker.io/langfuse/langfuse-worker:3
+    image: docker.io/langfuse/langfuse-worker:3.155
     container_name: rag-langfuse-worker
     restart: unless-stopped
     depends_on:
@@ -307,7 +307,7 @@ services:
       - rag-network
 
   langfuse-postgres:
-    image: postgres:17
+    image: postgres:17-alpine
     container_name: rag-langfuse-postgres
     restart: unless-stopped
     environment:
@@ -331,7 +331,7 @@ services:
       - rag-network
 
   langfuse-redis:
-    image: docker.io/redis:7
+    image: docker.io/redis:7-alpine
     container_name: rag-langfuse-redis
     restart: unless-stopped
     command: --requirepass langfuse_redis_password

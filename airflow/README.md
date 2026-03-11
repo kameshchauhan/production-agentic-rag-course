@@ -102,3 +102,6 @@ PYTHONPATH=/opt/airflow/src
 - **Advanced Scheduling**: Multiple collection strategies
 - **Monitoring & Alerting**: Production observability
 - **Scale Optimization**: Higher concurrency for production workloads
+
+To reset airflow admin pass
+`docker exec -it rag-airflow airflow users reset-password --username admin --password kamesh`

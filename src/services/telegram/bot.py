@@ -2,6 +2,7 @@ import logging
 from typing import Optional
 
 from telegram import Update
+from telegram.error import Conflict
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 from src.schemas.api.ask import AskRequest, AskResponse
@@ -43,8 +44,11 @@ class TelegramBot:
         # Start polling
         await self.application.initialize()
         await self.application.start()
-        await self.application.updater.start_polling()
-        logger.info("Telegram bot started successfully")
+        try:
+            await self.application.updater.start_polling()
+            logger.info("Telegram bot started successfully")
+        except Conflict:
+            logger.warning("Another bot instance is running. Telegram bot polling disabled (will retry on next restart).")
 
     async def stop(self) -> None:
         """Stop the bot."""
